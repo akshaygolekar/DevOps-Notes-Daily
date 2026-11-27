@@ -1,0 +1,17 @@
+
+deploy-staging:                       # Creates a job named deploy-staging to deploy the application to the staging server.
+  needs: ci                           # Runs this job only after the CI job completes successfully.
+  if: github.ref == 'refs/heads/main' # Executes this job only when the code is pushed to the main branch.
+  runs-on: ubuntu-latest              # 	Uses the latest supported Ubuntu environment to execute the deployment job.
+
+  steps:                              # Defines the deployment tasks that execute one by one.
+    - uses: actions/checkout@v4       # Downloads the repository code into the GitHub runner.
+
+    - run: npm ci                     # Installs project dependencies using package-lock.json.
+ 
+    - run: npm run build              # Builds the application and generates production-ready files. 
+
+    - run: |                          # Allows you to write a multi-line shell command in YAML.         
+                                           
+      ssh user@staging 'docker-compose pull && docker-compose up -d'             
+                                      
