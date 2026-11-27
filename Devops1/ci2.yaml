@@ -1,0 +1,17 @@
+jobs:               # Define all jobs to execute in github actions workflow
+  ci:               # Create a job named ci 
+    runs-on: ubuntu-latest  # specifies ubuntu as the operating system for running a job
+
+    steps:                  # Defines the tasks that execute one by one inside the job.
+        - uses: actions/checkout@v4   # Downloads the GitHub repository code into the runner.
+
+        - uses: actions/setup-node@v4   # Installs and configures Node.js in the runner
+          with:                         # Provides configuration options to the setup-node action.
+              node-version:'20'         # Specifies Node.js version 20.
+              cache: 'npm'              # Enables npm dependency caching to speed up future workflow runs.
+        - run: npm ci                   # Installs exact project dependencies using package-lock.json.
+
+        - run: npm run lint             # Checks source code for coding errors and style issues.
+
+        - run: npm test                 # 	Executes automated tests to verify application functionality.
+             
