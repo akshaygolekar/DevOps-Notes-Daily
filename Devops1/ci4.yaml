@@ -1,0 +1,16 @@
+
+deploy-prod:                                 # Creates a job named deploy-prod to deploy the application to the production server.
+  needs: deploy-staging                      # 	Runs the production deployment only after the staging deployment completes successfully.
+  if: startsWith(github.ref, 'refs/tags/v')  # Runs this job only when the GitHub reference starts with refs/tags/v, such as v1.0.0.
+  environment: production                    # Assigns the job to the production environment. It can use environment-specific secrets and approval protection rules.
+  runs-on: ubuntu-latest                     # Uses the latest supported Ubuntu runner to execute the deployment.
+
+  steps:                                     # Defines the tasks that execute one by one.
+    - uses: actions/checkout@v4              # Downloads the repository code into the GitHub runner.
+
+    - run: npm ci                            # 	Installs exact project dependencies using package-lock.json.
+
+    - run: npm run build                     # 	Builds the application and generates production-ready files.
+ 
+    - run: |                                 # 	Allows multiple shell commands to be written in a YAML block.
+        ssh user@production 'docker-compose pull && docker-compose up -d'
